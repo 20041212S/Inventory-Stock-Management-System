@@ -5,23 +5,11 @@ services:
     rootDir: backend
     dockerfilePath: ./Dockerfile
     envVars:
-      - key: DB_USER
-        fromDatabase:
-          name: inventory-db
-          property: user
-      - key: DB_PASSWORD
-        fromDatabase:
-          name: inventory-db
-          property: password
       - key: DATABASE_URL
-        fromDatabase:
-          name: inventory-db
-          property: connectionString
+        sync: false   # Set manually in Render dashboard from Neon
+      - key: DB_USER
+        sync: false   # Set manually in Render dashboard from Neon
+      - key: DB_PASSWORD
+        sync: false   # Set manually in Render dashboard from Neon
       - key: PORT
         value: 8080
-
-databases:
-  - name: inventory-db
-    databaseName: inventory_db
-    user: inventory_user
-    plan: free
