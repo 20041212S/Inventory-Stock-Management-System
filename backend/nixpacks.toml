@@ -1,0 +1,12 @@
+[phases.setup]
+nixPkgs = ["maven", "jdk17"]
+
+[phases.install]
+cmds = ["mvn clean install -DskipTests"]
+
+[phases.build]
+cmds = ["mvn clean package -DskipTests"]
+
+[start]
+cmd = "java -jar target/inventory-stock-management-1.0.0.jar"
+

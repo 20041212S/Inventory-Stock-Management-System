@@ -14,7 +14,11 @@ public class CorsConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
+        // Allow localhost for development
         config.addAllowedOrigin("http://localhost:3000");
+        // Allow Railway frontend domains
+        config.addAllowedOriginPattern("https://*.up.railway.app");
+        config.addAllowedOriginPattern("https://*.vercel.app");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);
