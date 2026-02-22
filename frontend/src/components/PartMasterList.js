@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { partMasterAPI } from '../services/api';
 import './PartMasterList.css';
 
@@ -14,11 +14,7 @@ const PartMasterList = () => {
   const [showImportModal, setShowImportModal] = useState(false);
   const [importFile, setImportFile] = useState(null);
 
-  useEffect(() => {
-    loadParts();
-  }, [page, searchTerm]);
-
-  const loadParts = async () => {
+  const loadParts = useCallback(async () => {
     setLoading(true);
     try {
       const response = await partMasterAPI.getAll(page, size, searchTerm);
@@ -30,7 +26,11 @@ const PartMasterList = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, size, searchTerm]);
+
+  useEffect(() => {
+    loadParts();
+  }, [loadParts]);
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);

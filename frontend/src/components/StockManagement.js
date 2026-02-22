@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { stockAPI, partMasterAPI } from '../services/api';
 import './StockManagement.css';
 
@@ -22,12 +22,7 @@ const StockManagement = () => {
     rackNumber: '',
   });
 
-  useEffect(() => {
-    loadStocks();
-    loadParts();
-  }, [page]);
-
-  const loadStocks = async () => {
+  const loadStocks = useCallback(async () => {
     setLoading(true);
     try {
       const response = await stockAPI.getAll(page, size);
@@ -39,16 +34,21 @@ const StockManagement = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, size]);
 
-  const loadParts = async () => {
+  const loadParts = useCallback(async () => {
     try {
       const response = await partMasterAPI.getAllList();
       setParts(response.data || []);
     } catch (error) {
       console.error('Failed to load parts:', error);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    loadStocks();
+    loadParts();
+  }, [loadStocks, loadParts]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -132,7 +132,7 @@ const StockManagement = () => {
     try {
       const response = await stockAPI.bulkUpload(uploadFile);
       const data = response.data;
-      
+
       let messageText = `Upload completed: ${data.successCount} successful, ${data.failureCount} failed`;
       if (data.warnings && data.warnings.length > 0) {
         messageText += '\nWarnings: ' + data.warnings.join(', ');
@@ -141,9 +141,9 @@ const StockManagement = () => {
         messageText += '\nErrors: ' + data.errors.join(', ');
       }
 
-      setMessage({ 
-        type: data.failureCount > 0 ? 'warning' : 'success', 
-        text: messageText 
+      setMessage({
+        type: data.failureCount > 0 ? 'warning' : 'success',
+        text: messageText
       });
       setShowBulkUploadModal(false);
       setUploadFile(null);
